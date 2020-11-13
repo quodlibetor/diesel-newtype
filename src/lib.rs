@@ -117,7 +117,6 @@
 //! keep in mind that the Diesel methods basically auto-transmute your data into
 //! the underlying SQL type.
 
-
 extern crate syn;
 #[macro_use]
 extern crate quote;
@@ -163,17 +162,20 @@ fn expand_sql_types(ast: &syn::DeriveInput) -> TokenStream {
     // since our query doesn't take varargs it's fine for the DB to cache it
     let query_id_impl = gen_query_id(&name);
 
-    wrap_impls_in_const(name, &quote! {
-        #to_sql_impl
-        #as_expr_impl
+    wrap_impls_in_const(
+        name,
+        &quote! {
+            #to_sql_impl
+            #as_expr_impl
 
-        #from_sql_impl
-        #from_sqlrow_impl
+            #from_sql_impl
+            #from_sqlrow_impl
 
-        #queryable_impl
+            #queryable_impl
 
-        #query_id_impl
-    })
+            #query_id_impl
+        },
+    )
 }
 
 fn gen_tosql(name: &syn::Ident, wrapped_ty: &syn::Type) -> TokenStream {
