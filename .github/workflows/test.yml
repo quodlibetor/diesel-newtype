@@ -13,7 +13,7 @@ jobs:
   test:
     strategy:
       matrix:
-        rust_version: [1.18.0, stable, beta]
+        rust_version: [1.40.0, stable, beta]
 
     runs-on: ubuntu-latest
 
