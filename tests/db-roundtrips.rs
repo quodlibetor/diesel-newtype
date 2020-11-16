@@ -1,15 +1,17 @@
-#[macro_use] extern crate diesel;
-#[macro_use] extern crate diesel_derive_newtype;
+#[macro_use]
+extern crate diesel;
+#[macro_use]
+extern crate diesel_derive_newtype;
 
-use diesel::prelude::*;
 use diesel::dsl::sql;
+use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, DieselNewType)]
 pub struct MyId(String);
 
 #[derive(Debug, Clone, PartialEq, Identifiable, Insertable, Queryable)]
-#[table_name="my_entities"]
+#[table_name = "my_entities"]
 pub struct MyEntity {
     id: MyId,
     val: i32,
@@ -29,7 +31,8 @@ fn setup() -> SqliteConnection {
         "CREATE TABLE IF NOT EXISTS my_entities (
                 id TEXT PRIMARY KEY,
                 val Int
-         )");
+         )",
+    );
     setup.execute(&conn).expect("Can't create table");
     conn
 }
@@ -37,7 +40,10 @@ fn setup() -> SqliteConnection {
 #[test]
 fn does_roundtrip() {
     let conn = setup();
-    let obj = MyEntity { id: MyId("WooHoo".into()), val: 1 };
+    let obj = MyEntity {
+        id: MyId("WooHoo".into()),
+        val: 1,
+    };
 
     diesel::insert_into(my_entities::table)
         .values(&obj)
@@ -49,13 +55,18 @@ fn does_roundtrip() {
     assert_eq!(found[0], obj);
 }
 
-
 #[test]
 fn queryable() {
     let conn = setup();
     let objs = vec![
-        MyEntity { id: MyId("WooHoo".into()), val: 1 },
-        MyEntity { id: MyId("boo".into()), val: 2 },
+        MyEntity {
+            id: MyId("WooHoo".into()),
+            val: 1,
+        },
+        MyEntity {
+            id: MyId("boo".into()),
+            val: 2,
+        },
     ];
 
     diesel::insert_into(my_entities::table)
@@ -74,11 +85,20 @@ fn queryable() {
 #[test]
 fn query_as_id() {
     let conn = setup();
-    let expected = MyEntity { id: MyId("WooHoo".into()), val: 1 };
+    let expected = MyEntity {
+        id: MyId("WooHoo".into()),
+        val: 1,
+    };
     let objs = vec![
-        MyEntity { id: MyId("loop".into()), val: 0 },
+        MyEntity {
+            id: MyId("loop".into()),
+            val: 0,
+        },
         expected.clone(),
-        MyEntity { id: MyId("boo".into()), val: 2 },
+        MyEntity {
+            id: MyId("boo".into()),
+            val: 2,
+        },
     ];
 
     diesel::insert_into(my_entities::table)
@@ -96,11 +116,20 @@ fn query_as_id() {
 #[test]
 fn query_as_underlying_type() {
     let conn = setup();
-    let expected = MyEntity { id: MyId("WooHoo".into()), val: 1 };
+    let expected = MyEntity {
+        id: MyId("WooHoo".into()),
+        val: 1,
+    };
     let objs = vec![
-        MyEntity { id: MyId("loop".into()), val: 0 },
+        MyEntity {
+            id: MyId("loop".into()),
+            val: 0,
+        },
         expected.clone(),
-        MyEntity { id: MyId("boo".into()), val: 2 },
+        MyEntity {
+            id: MyId("boo".into()),
+            val: 2,
+        },
     ];
 
     diesel::insert_into(my_entities::table)
@@ -118,11 +147,20 @@ fn query_as_underlying_type() {
 #[test]
 fn set() {
     let conn = setup();
-    let expected = MyEntity { id: MyId("WooHoo".into()), val: 1 };
+    let expected = MyEntity {
+        id: MyId("WooHoo".into()),
+        val: 1,
+    };
     let objs = vec![
-        MyEntity { id: MyId("loop".into()), val: 0 },
+        MyEntity {
+            id: MyId("loop".into()),
+            val: 0,
+        },
         expected.clone(),
-        MyEntity { id: MyId("boo".into()), val: 2 },
+        MyEntity {
+            id: MyId("boo".into()),
+            val: 2,
+        },
     ];
 
     diesel::insert_into(my_entities::table)
@@ -139,5 +177,5 @@ fn set() {
         .filter(my_entities::id.eq(&new_id))
         .load(&conn)
         .unwrap();
-    assert_eq!(updated_ids, vec![ MyEntity { id: new_id, val: 1 }])
+    assert_eq!(updated_ids, vec![MyEntity { id: new_id, val: 1 }])
 }

@@ -1,11 +1,13 @@
 //! This is a test file that *DOES* compile and pass tests, but which should
 //! not
 
-#[macro_use] extern crate diesel;
-#[macro_use] extern crate diesel_derive_newtype;
+#[macro_use]
+extern crate diesel;
+#[macro_use]
+extern crate diesel_derive_newtype;
 
-use diesel::prelude::*;
 use diesel::dsl::sql;
+use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, DieselNewType)]
@@ -14,9 +16,8 @@ pub struct MyId(String);
 #[derive(Debug, Clone, PartialEq, Eq, Hash, DieselNewType)]
 pub struct OtherId(String);
 
-
 #[derive(Debug, Clone, PartialEq, Identifiable, Insertable, Queryable)]
-#[table_name="my_entities"]
+#[table_name = "my_entities"]
 pub struct MyEntity {
     id: MyId,
     val: i32,
@@ -36,7 +37,8 @@ fn setup() -> SqliteConnection {
         "CREATE TABLE IF NOT EXISTS my_entities (
                 id TEXT PRIMARY KEY,
                 val Int
-         )");
+         )",
+    );
     setup.execute(&conn).expect("Can't create table");
     conn
 }
@@ -45,9 +47,18 @@ fn setup() -> SqliteConnection {
 fn setup_with_items() -> (SqliteConnection, Vec<MyEntity>) {
     let conn = setup();
     let objs = vec![
-        MyEntity { id: MyId("loop".into()), val: 0 },
-        MyEntity { id: MyId("WooHoo".into()), val: 1 },
-        MyEntity { id: MyId("boo".into()), val: 2 },
+        MyEntity {
+            id: MyId("loop".into()),
+            val: 0,
+        },
+        MyEntity {
+            id: MyId("WooHoo".into()),
+            val: 1,
+        },
+        MyEntity {
+            id: MyId("boo".into()),
+            val: 2,
+        },
     ];
 
     diesel::insert_into(my_entities::table)
@@ -74,7 +85,7 @@ fn set() {
 
     let expected = objs[1].clone();
 
-    let new_id = OtherId("Oh My".into());  // <-- OTHERID
+    let new_id = OtherId("Oh My".into()); // <-- OTHERID
     diesel::update(my_entities::table.find(&expected.id))
         .set(my_entities::id.eq(&new_id))
         .execute(&conn)
